@@ -41,9 +41,11 @@ Read this section before relying on it.
   of the workspace is handed to cargo.
 - It is pinned to one toolchain, Rust 1.100.0. It links against rustc's output, so it has to
   agree with that rustc on symbol names, type layout and the unstable Rust ABI.
-- `cargo rustd` builds programs on Linux (ELF) and on macOS arm64 (Mach-O), in any profile
-  and with `RUSTFLAGS`; other targets fail the build. On macOS it has been run on ripgrep, fd and hyperfine only. The command has not
-  been built or run on Windows; the daemon underneath it has, through the harnesses.
+- `cargo rustd` builds programs on Linux (ELF), on macOS arm64 (Mach-O) and, in this fork, for
+  `x86_64-pc-windows-msvc` (COFF) from Linux with the CRT and SDK of `cargo xwin env` (linker
+  `lld-link`; the program was run under wine and an edit was rebuilt in 0.3 to 0.7 s). A
+  Windows host has not run `cargo rustd`; the daemon underneath it has, through the harnesses.
+  Other targets fail the build. On macOS it has been run on ripgrep, fd and hyperfine only.
 - The code rustd generates is for the edit loop. Each function is compiled alone and nothing
   is inlined across functions, under either backend.
 - It has been wrong: a fuzzer found twenty-one problems, most of them miscompiles. Four

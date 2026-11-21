@@ -686,6 +686,15 @@ impl LinkLine {
         binary: &Path,
         response: &Path,
     ) -> anyhow::Result<String> {
+        // `lld-link -flavor link` names its driver on the command line; in a response file
+        // the pair is read as a file named `link` and an option nobody knows.
+        let flavor: Vec<String> = match self.args.as_slice() {
+            [option, _, ..] if option == "-flavor" => {
+                self.args.drain(..2).collect()
+            }
+            _ => Vec::new(),
+        };
+        let first = first.saturating_sub(flavor.len());
         let stays = FIRST_DEFINITION_STAYS_MSVC.map(str::to_owned);
         self.args.splice(first..first, ours.into_iter().chain(stays));
         let binary = binary.display();
@@ -707,7 +716,8 @@ impl LinkLine {
         };
         let quoted: Vec<String> = self.args.iter().map(quoted).collect();
         std::fs::write(response, quoted.join("\n"))?;
-        Ok(format!("\"{}\" \"@{}\"", self.linker, response.display()))
+        let flavor: String = flavor.iter().map(|it| format!("\"{it}\" ")).collect();
+        Ok(format!("\"{}\" {flavor}\"@{}\"", self.linker, response.display()))
     }
 }
 

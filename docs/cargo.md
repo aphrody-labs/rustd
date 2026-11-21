@@ -91,7 +91,7 @@ them is built by cargo instead.
 | `--message-format` other than `human` and `short` (the JSON ones), `--build-plan`, `--unit-graph` | the flag is not answered by `cargo rustd` yet |
 | a `-Z` flag | unstable cargo flags are not read by rustd |
 | more than one `--target` | several `--target` in one build are not built by the daemon yet |
-| `--target` or `CARGO_BUILD_TARGET` naming a target that is neither ELF nor Mach-O, or one rustd does not know | programs for the triple are not linked through `cargo rustd` yet |
+| `--target` or `CARGO_BUILD_TARGET` naming a target that is not ELF, Mach-O or COFF, or one rustd does not know | programs for the triple are not linked through `cargo rustd` yet |
 | `RUSTC_WORKSPACE_WRAPPER` set to another wrapper | `cargo rustd` does not run rustc through it |
 | `rustd-rustc` or `rustd-rustc-first` missing | `rustd-rustc` (or `rustd-rustc-first`) is not installed next to `rustd` |
 | a toolchain other than the one rustd is pinned to | rustc 1.x is not the 1.100.0 this rustd compiles for |
