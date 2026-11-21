@@ -230,6 +230,8 @@ impl FloatExt for Float {
             F32 => types.types.f32,
             F64 => types.types.f64,
             F128 => types.types.f128,
+            // bfloat16 exists only inside rustc_abi (1.100); no Rust surface type names it.
+            F16B => types.types.error,
         }
     }
 
