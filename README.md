@@ -39,7 +39,7 @@ Read this section before relying on it.
   function and the reason, and so does a command it does not build, such as
   `cargo rustd test` today: see [What is not supported](#what-is-not-supported). No build
   of the workspace is handed to cargo.
-- It is pinned to one toolchain, Rust 1.99.0. It links against rustc's output, so it has to
+- It is pinned to one toolchain, Rust 1.100.0. It links against rustc's output, so it has to
   agree with that rustc on symbol names, type layout and the unstable Rust ABI.
 - `cargo rustd` builds programs on Linux (ELF) and on macOS arm64 (Mach-O), in any profile
   and with `RUSTFLAGS`; other targets fail the build. On macOS it has been run on ripgrep, fd and hyperfine only. The command has not
@@ -62,29 +62,29 @@ On Windows x86-64, in PowerShell:
 The script downloads the latest [release](https://github.com/DioxusLabs/rustd/releases),
 checks it against the release's SHA-256 sums and puts `rustd`, `cargo-rustd` and
 `rustd-rustc` in `~/.cargo/bin`. `RUSTD_VERSION=nightly` takes the newest build of `main`
-instead. You still need Rust 1.99.0 with `rust-src`:
+instead. You still need Rust 1.100.0 with `rust-src`:
 
-    rustup toolchain install 1.99.0 --component rust-src
+    rustup toolchain install 1.100.0 --component rust-src
 
 The released binaries have the Cranelift backend only. The LLVM backend links LLVM 20 from
 the machine it runs on, so it is built from source.
 
 ## Build from source
 
-You need Rust 1.99.0 with the `rust-src` component. LLVM 20 is optional and adds the LLVM
+You need Rust 1.100.0 with the `rust-src` component. LLVM 20 is optional and adds the LLVM
 backend.
 
-    rustup toolchain install 1.99.0 --component rust-src
+    rustup toolchain install 1.100.0 --component rust-src
     git clone --recursive https://github.com/DioxusLabs/rustd
     cd rustd
-    cargo +1.99.0 build -p rustd --release
+    cargo +1.100.0 build -p rustd --release
 
 `vendor/rust-analyzer` is a submodule: rust-analyzer with rustd's changes to it, kept on the
 `rust-analyzer` branch of this repository. If you cloned without `--recursive`, run
 `git submodule update --init`. With LLVM 20 installed (on Debian and
 Ubuntu, `llvm-20-dev` and `libpolly-20-dev` from apt.llvm.org):
 
-    LLVM_SYS_201_PREFIX=/usr/lib/llvm-20 cargo +1.99.0 build -p rustd --release --features llvm
+    LLVM_SYS_201_PREFIX=/usr/lib/llvm-20 cargo +1.100.0 build -p rustd --release --features llvm
 
 The build leaves `rustd`, `cargo-rustd`, `rustd-rustc` and `rustd-rustc-first` in
 `target/release`. Put all four in one directory on your `PATH`; each runs the others from next
@@ -96,7 +96,7 @@ to itself.
 
 ### `cargo rustd`
 
-In any cargo project, with 1.99.0 as the toolchain:
+In any cargo project, with 1.100.0 as the toolchain:
 
     cargo rustd build
     cargo rustd run -- --some-flag
@@ -251,7 +251,7 @@ upstream rust-analyzer at the commit rustd forked from with rustd's changes comm
 rustd is not part of the rust-analyzer project and is not endorsed by it; please do not
 report rustd problems there.
 
-Type layout is computed with rustc's own `rustc_abi` crate, copied unchanged from the 1.99.0
+Type layout is computed with rustc's own `rustc_abi` crate, copied unchanged from the 1.100.0
 tag into `vendor/rustc_abi`.
 
 ## Licence

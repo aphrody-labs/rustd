@@ -15,11 +15,11 @@ it is under [macOS arm64](#macos-arm64). The design notes it was written from ar
 program is built with rustd and runs the `rustd` executable in the same directory, so the two
 have to be installed side by side:
 
-    cargo +1.99.0 build -p rustd --release
+    cargo +1.100.0 build -p rustd --release
     cp target/release/rustd target/release/cargo-rustd ~/.cargo/bin/
 
-The project you build must use Rust 1.99.0, the toolchain rustd is pinned to. Use a
-`rust-toolchain.toml`, `rustup override set 1.99.0`, or `RUSTUP_TOOLCHAIN=1.99.0`.
+The project you build must use Rust 1.100.0, the toolchain rustd is pinned to. Use a
+`rust-toolchain.toml`, `rustup override set 1.100.0`, or `RUSTUP_TOOLCHAIN=1.100.0`.
 
 ## Commands
 
@@ -94,7 +94,7 @@ them is built by cargo instead.
 | `--target` or `CARGO_BUILD_TARGET` naming a target that is neither ELF nor Mach-O, or one rustd does not know | programs for the triple are not linked through `cargo rustd` yet |
 | `RUSTC_WORKSPACE_WRAPPER` set to another wrapper | `cargo rustd` does not run rustc through it |
 | `rustd-rustc` or `rustd-rustc-first` missing | `rustd-rustc` (or `rustd-rustc-first`) is not installed next to `rustd` |
-| a toolchain other than the one rustd is pinned to | rustc 1.x is not the 1.99.0 this rustd compiles for |
+| a toolchain other than the one rustd is pinned to | rustc 1.x is not the 1.100.0 this rustd compiles for |
 | a workspace crate built as `dylib`, or as a `bin` and another crate type | the daemon builds a `bin` alone, or a `lib`, `rlib`, `cdylib` and `staticlib` |
 | a workspace `staticlib` on Windows | rustd does not write a static library for `link.exe` yet |
 | a workspace in which every crate is a build script's, a proc macro or a dependency of one | the daemon builds none of those yet |

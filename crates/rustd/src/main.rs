@@ -6736,10 +6736,10 @@ mod tests {
 
     #[test]
     fn library_sources_are_named_as_rustc_names_them() {
-        let windows = r"C:\t\1.99.0\lib\rustlib\src\rust\library\core\src\iter\traits\accum.rs";
-        let named = r"C:\t\1.99.0\lib/rustlib/src/rust\library\core\src\iter\traits\accum.rs";
+        let windows = r"C:\t\1.100.0\lib\rustlib\src\rust\library\core\src\iter\traits\accum.rs";
+        let named = r"C:\t\1.100.0\lib/rustlib/src/rust\library\core\src\iter\traits\accum.rs";
         assert_eq!(as_rustc_names(windows.to_owned()), named);
-        let unix = "/t/1.99.0/lib/rustlib/src/rust/library/core/src/lib.rs";
+        let unix = "/t/1.100.0/lib/rustlib/src/rust/library/core/src/lib.rs";
         assert_eq!(as_rustc_names(unix.to_owned()), unix);
         assert_eq!(as_rustc_names(r"C:\w\src\lib.rs".to_owned()), r"C:\w\src\lib.rs");
     }

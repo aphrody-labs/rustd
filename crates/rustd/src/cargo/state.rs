@@ -754,7 +754,7 @@ impl State {
         // Cargo runs the doc tests of the libraries it runs the unit tests of. The examples of
         // one are a crate rust-analyzer adds when its file is there, which the daemon writes.
         let examples_dir = metadata.target_directory.as_std_path().join(crate::doctest::DIR);
-        // Cargo 1.99 runs no doc tests when tests are picked by target or by name.
+        // Cargo 1.100 runs no doc tests when tests are picked by target or by name.
         let picked = asked.flags.selects_targets || !asked.positional.is_empty();
         let tested_libraries =
             if picked && !asked.flags.doc { Vec::new() } else { tested_libraries };

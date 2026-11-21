@@ -1,4 +1,4 @@
 [submodule "vendor/rust-analyzer"]
 	path = vendor/rust-analyzer
-	url = https://github.com/DioxusLabs/rustd.git
-	branch = rust-analyzer
+	url = ../rustd.git
+	branch = rust-analyzer-aphrody

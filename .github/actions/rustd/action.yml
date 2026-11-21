@@ -12,8 +12,8 @@ runs:
   steps:
     - shell: bash
       run: |
-        rustup toolchain install 1.99.0 --profile minimal -c rust-src ${{ runner.os == 'Windows' && '-c llvm-tools' || '' }} ${{ inputs.components }}
-        rustup default 1.99.0
+        rustup toolchain install 1.100.0 --profile minimal -c rust-src ${{ runner.os == 'Windows' && '-c llvm-tools' || '' }} ${{ inputs.components }}
+        rustup default 1.100.0
 
     - if: inputs.build == 'true' && runner.os == 'Linux'
       shell: bash

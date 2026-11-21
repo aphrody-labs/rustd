@@ -27,7 +27,7 @@ you send them, including fixes you find here and want to upstream.
     docs/reports/             working reports, one per piece of work, as written at the time
     SECURITY.md               what to know before sharing a store, and how to report a problem
     vendor/rust-analyzer/     rust-analyzer with rustd's changes, a git submodule
-    vendor/rustc_abi/         rustc's layout crate, copied from the 1.99.0 tag
+    vendor/rustc_abi/         rustc's layout crate, copied from the 1.100.0 tag
     vendor/source.rev         the commit of the old development branch this tree last took from
 
 `crates/hir-ty-codegen` is not a crate. It is the module `hir_ty::mir::codegen`, which uses
@@ -45,7 +45,7 @@ records which commit of that branch it builds with, as git does for any submodul
 After cloning:
 
     git clone --recursive https://github.com/DioxusLabs/rustd
-    cargo +1.99.0 build -p rustd --release
+    cargo +1.100.0 build -p rustd --release
 
 or `git submodule update --init` in a clone made without `--recursive`. There is nothing
 else to run. After a pull that moves the submodule, `git submodule update` again.
@@ -93,7 +93,7 @@ exercised.
 with rustd's changes made in place. That branch and its history are kept as
 `rustd-collate` and `rustd-spike`. `publish/split.py` there is what wrote this layout.
 
-The toolchain is a separate pin. rustd is built for Rust 1.99.0 and `vendor/rustc_abi` is
+The toolchain is a separate pin. rustd is built for Rust 1.100.0 and `vendor/rustc_abi` is
 rustc's crate from that tag. Moving to another Rust version means taking the new
 `rustc_abi`, rechecking everything that mirrors rustc (the Rust ABI in the code generator,
 `vtable.rs`, `type_id.rs`, symbol names in `symbols.rs`), and running rustc's own test
