@@ -14,6 +14,9 @@ use serde::{Deserialize, Serialize};
 /// The directory of the records, in the directory cargo builds a profile in.
 const RECORDS: &str = ".rustd-units";
 
+/// The file cargo creates in the directory of every profile.
+const PROFILE_LOCK: &str = ".cargo-lock";
+
 /// The file in the record of a unit that says rustc built what stands in for the crate.
 pub(crate) const STANDS_IN: &str = "stands-in";
 
@@ -55,11 +58,58 @@ pub(crate) struct Copied {
     pub(crate) copy: PathBuf,
 }
 
+/// How rustc names the files of a unit for the target it builds for: the host's names for a
+/// unit with no `--target`, as cargo asks for the units that run in the build.
+pub(crate) struct Names {
+    pub(crate) executable_suffix: &'static str,
+    pub(crate) library_prefix: &'static str,
+    pub(crate) library_suffix: &'static str,
+    pub(crate) static_is_lib: bool,
+}
+
+impl Names {
+    pub(crate) fn of(triple: Option<&str>) -> Names {
+        let Some(triple) = triple else {
+            return Names {
+                executable_suffix: std::env::consts::EXE_SUFFIX,
+                library_prefix: std::env::consts::DLL_PREFIX,
+                library_suffix: std::env::consts::DLL_SUFFIX,
+                static_is_lib: cfg!(target_env = "msvc"),
+            };
+        };
+        let (windows, apple) = (triple.contains("-windows"), triple.contains("-apple"));
+        Names {
+            executable_suffix: if windows {
+                ".exe"
+            } else if triple.starts_with("wasm") {
+                ".wasm"
+            } else {
+                ""
+            },
+            library_prefix: if windows { "" } else { "lib" },
+            library_suffix: if windows {
+                ".dll"
+            } else if apple {
+                ".dylib"
+            } else {
+                ".so"
+            },
+            static_is_lib: triple.ends_with("-msvc"),
+        }
+    }
+}
+
 impl Record {
     /// Where the records of the units cargo writes to `out_dir` are: in the directory of the
     /// profile, which `deps`, `examples` and `build` are in. A file cargo links from one of
     /// those to the profile's directory is found the same way.
     pub(crate) fn dir_for(out_dir: &Path) -> PathBuf {
+        // The profile directory is the one cargo keeps its lock in. Going by the names of
+        // the places alone mistakes the profile directory itself for a workspace below a
+        // directory that is called `build`, `deps` or `examples`.
+        if let Some(profile) = out_dir.ancestors().find(|it| it.join(PROFILE_LOCK).is_file()) {
+            return profile.join(RECORDS);
+        }
         let profile = out_dir
             .ancestors()
             .find(|it| it.file_name().is_some_and(|name| PLACES.iter().any(|it| name == *it)))
@@ -125,6 +175,17 @@ impl Record {
         self.value("--out-dir").map(|it| self.cwd.join(it))
     }
 
+    /// The target the unit is built for, when cargo names one: a build run with `--target`
+    /// names it for the units of the program and not for the ones that run in the build.
+    pub(crate) fn target(&self) -> Option<&str> {
+        self.value("--target")
+    }
+
+    /// The names rustc gives the files of the unit.
+    pub(crate) fn names(&self) -> Names {
+        Names::of(self.target())
+    }
+
     fn extra_filename(&self) -> &str {
         self.codegen("extra-filename").unwrap_or_default()
     }
@@ -153,7 +214,8 @@ impl Record {
         if self.is_test() || !kinds.contains(&"cdylib") {
             return None;
         }
-        let (prefix, suffix) = (std::env::consts::DLL_PREFIX, std::env::consts::DLL_SUFFIX);
+        let names = self.names();
+        let (prefix, suffix) = (names.library_prefix, names.library_suffix);
         Some(self.out_dir()?.join(format!(
             "{prefix}{}{}{suffix}",
             self.crate_name,
@@ -167,7 +229,7 @@ impl Record {
             return None;
         }
         let (name, extra) = (&self.crate_name, self.extra_filename());
-        let file = match cfg!(target_env = "msvc") {
+        let file = match self.names().static_is_lib {
             true => format!("{name}{extra}.lib"),
             false => format!("lib{name}{extra}.a"),
         };
@@ -189,7 +251,7 @@ impl Record {
         let (name, extra) = (&self.crate_name, self.extra_filename());
         let mut outputs = Vec::new();
         if self.is_linked() {
-            outputs.push(out_dir.join(format!("{name}{extra}{}", std::env::consts::EXE_SUFFIX)));
+            outputs.push(out_dir.join(format!("{name}{extra}{}", self.names().executable_suffix)));
         }
         if self.is_rlib() {
             outputs.push(out_dir.join(format!("lib{name}{extra}.rlib")));

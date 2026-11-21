@@ -236,7 +236,7 @@ impl Plan {
         };
         let library = !unit.is_linked();
         if library {
-            plan.binary = dir.join(format!("{LIBRARY_STEM}{}", std::env::consts::DLL_SUFFIX));
+            plan.binary = dir.join(format!("{LIBRARY_STEM}{}", unit.names().library_suffix));
             Exports::plan(&mut link, unit, &plan.object)?;
         }
         let mut ahead = vec![&*plan.patch, &*plan.object];
@@ -274,7 +274,7 @@ impl Plan {
             return Ok(Err("rustd does not write a static library for `link.exe` yet".to_owned()));
         }
         plan.copies.push(archive.to_owned());
-        let extension = if cfg!(target_env = "msvc") { "lib" } else { "a" };
+        let extension = if unit.names().static_is_lib { "lib" } else { "a" };
         plan.binary = dir.join(format!("{LIBRARY_STEM}.{extension}"));
         plan.link_cmd = link.archive_command(&plan, archive, &dir.join("archived.o"))?;
         Ok(Ok(plan))

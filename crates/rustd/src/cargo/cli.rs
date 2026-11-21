@@ -404,7 +404,10 @@ fn missing_wrapper() -> Option<String> {
 fn unsupported_target(triple: &str) -> Option<String> {
     use hir_ty::mir::codegen::{ObjectFormat, Target};
     match Target::select(triple) {
-        Ok(target) if matches!(target.object_format, ObjectFormat::Elf | ObjectFormat::MachO) => {
+        Ok(target) if matches!(
+            target.object_format,
+            ObjectFormat::Elf | ObjectFormat::MachO | ObjectFormat::Coff
+        ) => {
             None
         }
         Ok(_) => Some(format!("programs for {triple} are not linked through `cargo rustd` yet")),
